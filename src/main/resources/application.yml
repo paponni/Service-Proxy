@@ -1,0 +1,79 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: transfer-service
+          uri: lb://transfer-service
+          predicates:
+            - Path=/transferservice/**
+          filters:
+            - name: Hystrix
+              args:
+                name: transfer-service
+                fallbackuri: forward:/fallback/transfer
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/notification/**
+          filters:
+            - name: Hystrix
+              args:
+                name: notification-service
+                fallbackuri: forward:/fallback/notification
+        - id: client-service
+          uri: lb://client-service
+          predicates:
+            - Path=/client/**
+          filters:
+            - name: Hystrix
+              args:
+                name: client-service
+                fallbackuri: forward:/fallback/client
+        - id: backoffice-service
+          uri: lb://backoffice-service
+          predicates:
+            - Path=/backoffice/**
+          filters:
+            - name: Hystrix
+              args:
+                name: backoffice-service
+                fallbackuri: forward:/fallback/backoffice
+        - id: agent-service
+          uri: lb://agent-service
+          predicates:
+            - Path=/agent/**
+          filters:
+            - name: Hystrix
+              args:
+                name: agent-service
+                fallbackuri: forward:/fallback/agent
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowHeaders: "*"
+
+
+
+
+#Hystrix Configuration (Defining the timeout to 4s)
+hystrix:
+  command:
+    fallbackcmd:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
+
+#Configuration for the actuators (Enabling hystrix stream so we can use hystrix Dashboard)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream
