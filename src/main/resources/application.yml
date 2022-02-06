@@ -85,4 +85,4 @@ eureka:
 
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_URL}/eureka/
+      defaultZone: ${EUREKA_URL:http://user:alien51@localhost:5000}/eureka/
