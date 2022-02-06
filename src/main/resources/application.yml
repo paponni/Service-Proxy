@@ -81,3 +81,8 @@ management:
 eureka:
   instance:
     hostname: ${DOMAIN_NAME}
+
+
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URL}/eureka/
